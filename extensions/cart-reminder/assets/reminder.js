@@ -3,6 +3,8 @@
   const closeBtn = document.getElementById('cart-reminder-close');
   const form = document.getElementById('cart-reminder-form');
   const emailInput = document.getElementById('reminder-email');
+  const consentCheckbox = document.getElementById('reminder-consent');
+  const submitButton = form.querySelector('button[type="submit"]');
   const statusMsg = document.getElementById('reminder-status');
 
   if (!overlay) return;
@@ -11,6 +13,17 @@
 
   // Don't show if already dismissed or captured in this session
   if (localStorage.getItem('cart_reminder_captured')) return;
+
+  // Enable/disable submit button based on consent checkbox
+  function updateSubmitButton() {
+    submitButton.disabled = !consentCheckbox.checked;
+  }
+
+  // Initialize button state
+  updateSubmitButton();
+
+  // Listen for checkbox changes
+  consentCheckbox.addEventListener('change', updateSubmitButton);
 
   setTimeout(() => {
     overlay.style.display = 'flex';
@@ -23,10 +36,17 @@
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
     const email = emailInput.value;
-    const button = form.querySelector('button');
+    const consent = consentCheckbox.checked;
 
-    button.innerText = 'Capturing...';
-    button.disabled = true;
+    if (!consent) {
+      statusMsg.innerText = "Please accept the privacy policy to continue.";
+      statusMsg.style.display = 'block';
+      statusMsg.style.color = '#d72c0d';
+      return;
+    }
+
+    submitButton.innerText = 'Capturing...';
+    submitButton.disabled = true;
 
     try {
       // 1. Get the current cart via AJAX
@@ -37,8 +57,8 @@
         statusMsg.innerText = "Add something to your cart first!";
         statusMsg.style.display = 'block';
         statusMsg.style.color = '#d72c0d';
-        button.innerText = 'Remind Me';
-        button.disabled = false;
+        submitButton.innerText = 'Remind Me';
+        submitButton.disabled = false;
         return;
       }
 
@@ -46,7 +66,8 @@
       const payload = {
         email: email,
         cart: cartData,
-        shop: config.shop
+        shop: config.shop,
+        consent: consent
       };
 
       const captureResponse = await fetch('/apps/cart-reminder/capture', {
@@ -74,8 +95,8 @@
       statusMsg.innerText = "Something went wrong. Please try again.";
       statusMsg.style.display = 'block';
       statusMsg.style.color = '#d72c0d';
-      button.innerText = 'Remind Me';
-      button.disabled = false;
+      submitButton.innerText = 'Remind Me';
+      submitButton.disabled = false;
     }
   });
 })();

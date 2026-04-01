@@ -9,10 +9,23 @@ export async function action({ request }) {
   }
 
   const payload = await request.json();
-  const { email, cart } = payload;
+  const { email, cart, consent } = payload;
 
   if (!email || !cart) {
     return Response.json({ message: "Missing required fields" }, { status: 400 });
+  }
+
+  // Check if reminder is enabled for this shop
+  const settings = await prisma.shopSettings.findUnique({
+    where: { shop: `${shop}_reminder` }
+  });
+
+  if (!settings || !settings.enabled) {
+    return Response.json({ message: "Storefront capture is disabled for this shop" }, { status: 403 });
+  }
+
+  if (!consent) {
+    return Response.json({ message: "Consent is required" }, { status: 400 });
   }
 
   try {
@@ -21,11 +34,12 @@ export async function action({ request }) {
         shop: shop,
         email: email,
         cartData: JSON.stringify(cart),
+        consent: consent,
         status: "PENDING",
       },
     });
 
-    console.log(`Lead captured for ${shop}: ${email}`);
+    console.log(`Lead captured for ${shop}: ${email} with consent: ${consent}`);
 
     return Response.json({ success: true, leadId: lead.id });
   } catch (err) {

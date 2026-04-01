@@ -63,6 +63,31 @@
   font-size: 14px;
 }
 
+.consent-container {
+  margin: 15px 0;
+  text-align: left;
+}
+
+.consent-checkbox {
+  margin-right: 8px;
+  cursor: pointer;
+}
+
+.consent-label {
+  font-size: 14px;
+  color: #333;
+  cursor: pointer;
+}
+
+.consent-label a {
+  color: #008060;
+  text-decoration: underline;
+}
+
+.consent-label a:hover {
+  color: #006e52;
+}
+
 @keyframes slide-up {
   from { transform: translateY(20px); opacity: 0; }
   to { transform: translateY(0); opacity: 1; }

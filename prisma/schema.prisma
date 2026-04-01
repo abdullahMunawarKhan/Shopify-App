@@ -72,6 +72,7 @@ model Lead {
   lastReminderSent DateTime?
   status           String   @default("PENDING") // PENDING, CONVERTED
   cartData         String?  // JSON string of cart contents
+  consent          Boolean  @default(false)
   createdAt        DateTime @default(now())
 
   @@index([shop, email])

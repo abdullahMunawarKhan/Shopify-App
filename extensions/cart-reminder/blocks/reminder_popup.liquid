@@ -40,7 +40,16 @@
     <p>{{ block.settings.popup_text }}</p>
     <form id="cart-reminder-form">
       <input type="email" id="reminder-email" placeholder="Enter your email" required class="reminder-input">
-      <button type="submit" class="reminder-button">Remind Me</button>
+
+      <div class="consent-container">
+        <input type="checkbox" id="reminder-consent" required class="consent-checkbox">
+        <label for="reminder-consent" class="consent-label">
+          I agree to receive emails and accept the
+          <a href="/pages/privacy-policy" target="_blank" rel="noopener noreferrer">Privacy Policy</a>
+        </label>
+      </div>
+
+      <button type="submit" class="reminder-button" disabled>Remind Me</button>
     </form>
     <p id="reminder-status" class="reminder-status" style="display: none;"></p>
   </div>

@@ -27,6 +27,21 @@ export const webhooks = {
 
             const order = payload;
 
+            // 3. Mark matching leads as CONVERTED
+            if (order.email) {
+                await db.lead.updateMany({
+                    where: {
+                        shop,
+                        email: order.email,
+                        status: "PENDING",
+                    },
+                    data: {
+                        status: "CONVERTED",
+                    },
+                });
+                console.log(`Lead for ${order.email} on ${shop} marked as CONVERTED`);
+            }
+
             const gateways = (order.payment_gateway_names || []).map((x) =>
                 String(x).toLowerCase()
             );

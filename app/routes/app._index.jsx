@@ -1,4 +1,5 @@
-import { useLoaderData } from "react-router";
+import { useLoaderData, useNavigate } from "react-router";
+import { BlockStack, InlineStack, Button, Badge } from "@shopify/polaris";
 import { boundary } from "@shopify/shopify-app-react-router/server";
 import { authenticate } from "../shopify.server";
 import prisma from "../db.server";
@@ -77,31 +78,31 @@ export const action = async ({ request }) => {
     variant: variantResponseJson.data.productVariantsBulkUpdate.productVariants,
   };
 };
-
 export default function Index() {
   const { totalLeads, pendingLeads } = useLoaderData();
+  const navigate = useNavigate();
 
   return (
     <s-page heading="Cart Reminder & COD Dashboard">
       <s-section heading="Cart Reminder Statistics">
-        <s-stack direction="inline" gap="base">
-          <s-badge tone="info">Total Leads: {totalLeads}</s-badge>
-          <s-badge tone="attention">Pending Reminders: {pendingLeads}</s-badge>
-        </s-stack>
+        <InlineStack gap="base">
+          <Badge tone="info">Total Leads: {totalLeads}</Badge>
+          <Badge tone="attention">Pending Reminders: {pendingLeads}</Badge>
+        </InlineStack>
       </s-section>
 
       <s-section heading="Quick Actions">
-        <s-stack direction="block" gap="base">
-          <s-button href="/app/leads" variant="primary">
+        <BlockStack gap="200">
+          <Button onClick={() => navigate("/app/leads")} variant="primary">
             Manage Captured Leads
-          </s-button>
-          <s-button href="/app/templates" variant="secondary">
+          </Button>
+          <Button onClick={() => navigate("/app/templates")}>
             Manage Email Templates
-          </s-button>
-          <s-button href="/app/settings" variant="secondary">
+          </Button>
+          <Button onClick={() => navigate("/app/settings")}>
             COD Configuration
-          </s-button>
-        </s-stack>
+          </Button>
+        </BlockStack>
       </s-section>
 
       <s-section heading="App Status">
