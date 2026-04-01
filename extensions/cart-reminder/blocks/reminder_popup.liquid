@@ -1,0 +1,54 @@
+{% schema %}
+{
+  "name": "Cart Reminder Popup",
+  "target": "body",
+  "stylesheet": "reminder.css",
+  "javascript": "reminder.js",
+  "settings": [
+    {
+      "type": "text",
+      "id": "popup_title",
+      "label": "Popup Title",
+      "default": "Want a reminder?"
+    },
+    {
+      "type": "textarea",
+      "id": "popup_text",
+      "label": "Popup Text",
+      "default": "Enter your email to receive a direct link to your cart in your inbox!"
+    },
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Background Color",
+      "default": "#ffffff"
+    },
+    {
+        "type": "number",
+        "id": "delay_seconds",
+        "label": "Delay (seconds)",
+        "default": 10
+    }
+  ]
+}
+{% endschema %}
+
+<div id="cart-reminder-overlay" class="cart-reminder-overlay" style="display: none;">
+  <div class="cart-reminder-popup" style="background-color: {{ block.settings.bg_color }};">
+    <button id="cart-reminder-close" class="cart-reminder-close">&times;</button>
+    <h3>{{ block.settings.popup_title }}</h3>
+    <p>{{ block.settings.popup_text }}</p>
+    <form id="cart-reminder-form">
+      <input type="email" id="reminder-email" placeholder="Enter your email" required class="reminder-input">
+      <button type="submit" class="reminder-button">Remind Me</button>
+    </form>
+    <p id="reminder-status" class="reminder-status" style="display: none;"></p>
+  </div>
+</div>
+
+<script>
+  window.cartReminderSettings = {
+    delay: {{ block.settings.delay_seconds | times: 1000 }},
+    shop: "{{ shop.permanent_domain }}"
+  };
+</script>

@@ -21,8 +21,8 @@ export default function App() {
       <PolarisAppProvider i18n={translations}>
         <s-app-nav>
           <s-link href="/app">Home</s-link>
-          <s-link href="/app/settings">COD Configuration</s-link>
-          <s-link href="/app/additional">Additional page</s-link>
+          <s-link href="/app/leads">Captured Leads</s-link>
+          <s-link href="/app/templates">Email Templates</s-link>
           <s-link href="/app/settings">Settings</s-link>
         </s-app-nav>
         <Outlet />

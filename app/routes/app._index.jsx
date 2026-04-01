@@ -3,9 +3,13 @@ import { boundary } from "@shopify/shopify-app-react-router/server";
 import { authenticate } from "../shopify.server";
 
 export const loader = async ({ request }) => {
-  await authenticate.admin(request);
+  const { session } = await authenticate.admin(request);
+  const shop = session.shop;
 
-  return null;
+  const totalLeads = await prisma.lead.count({ where: { shop } });
+  const pendingLeads = await prisma.lead.count({ where: { shop, status: "PENDING" } });
+
+  return json({ totalLeads, pendingLeads });
 };
 
 export const action = async ({ request }) => {
@@ -74,29 +78,35 @@ export const action = async ({ request }) => {
 };
 
 export default function Index() {
+  const { totalLeads, pendingLeads } = useLoaderData();
+
   return (
-    <s-page heading="COD Confirmation Dashboard">
-      <s-section heading="Welcome to COD Confirmation">
-        <s-paragraph>
-          This app helps you reduce RTO (Return to Origin) by verifying Cash on Delivery orders via SMS/WhatsApp link.
-        </s-paragraph>
+    <s-page heading="Cart Reminder & COD Dashboard">
+      <s-section heading="Cart Reminder Statistics">
+        <s-stack direction="inline" gap="base">
+          <s-badge tone="info">Total Leads: {totalLeads}</s-badge>
+          <s-badge tone="attention">Pending Reminders: {pendingLeads}</s-badge>
+        </s-stack>
       </s-section>
 
       <s-section heading="Quick Actions">
         <s-stack direction="block" gap="base">
-          <s-button href="/app/settings" variant="primary">
-            Configure Settings
+          <s-button href="/app/leads" variant="primary">
+            Manage Captured Leads
           </s-button>
-          <s-paragraph>
-            Set up your confirmation window, minimum amount, and other preferences.
-          </s-paragraph>
+          <s-button href="/app/templates" variant="secondary">
+            Manage Email Templates
+          </s-button>
+          <s-button href="/app/settings" variant="secondary">
+            COD Configuration
+          </s-button>
         </s-stack>
       </s-section>
 
-      <s-section heading="Status">
-        <s-badge tone="success">App is Active</s-badge>
+      <s-section heading="App Status">
+        <s-badge tone="success">Active</s-badge>
         <s-paragraph>
-          Webhooks are registered and listening for new COD orders.
+          The storefront capture script is active and monitoring for abandoned carts.
         </s-paragraph>
       </s-section>
     </s-page>

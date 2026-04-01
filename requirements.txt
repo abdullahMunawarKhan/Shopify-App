@@ -1,0 +1,11 @@
+# This project is primarily a Node.js/TypeScript application
+# This requirements.txt file is included for completeness but is not needed to run the app
+
+# Optional: If you need to run Python tools or scripts
+# Node.js is the primary runtime (>=20.19 <22 || >=22.12)
+# SQLite is used as the database (included with Node.js)
+
+# Development tools (if needed)
+# python-dotenv==1.0.0
+# requests==2.31.0
+# pytest==7.4.3

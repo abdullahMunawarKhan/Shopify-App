@@ -63,3 +63,28 @@ model ConfirmationLog {
   action    String // CONFIRMED | CANCELLED
   createdAt DateTime @default(now())
 }
+
+model Lead {
+  id               Int      @id @default(autoincrement())
+  shop             String
+  email            String
+  capturedAt       DateTime @default(now())
+  lastReminderSent DateTime?
+  status           String   @default("PENDING") // PENDING, CONVERTED
+  cartData         String?  // JSON string of cart contents
+  createdAt        DateTime @default(now())
+
+  @@index([shop, email])
+}
+
+model EmailTemplate {
+  id        Int      @id @default(autoincrement())
+  shop      String
+  name      String
+  subject   String
+  body      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([shop])
+}
