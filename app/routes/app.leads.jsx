@@ -1,6 +1,5 @@
-import { json } from "@react-router/node";
 import { useLoaderData, useActionData, Form } from "react-router";
-import { Page, Layout, Card, ResourceList, ResourceItem, Text, Badge, Stack, Button } from "@shopify/polaris";
+import { Page, Layout, Card, ResourceList, ResourceItem, Text, Badge, InlineStack, BlockStack, Button } from "@shopify/polaris";
 import { authenticate } from "../shopify.server";
 import { useEffect } from "react";
 import { useAppBridge } from "@shopify/app-bridge-react";
@@ -15,7 +14,7 @@ export async function loader({ request }) {
     orderBy: { capturedAt: "desc" },
   });
 
-  return json({ leads });
+  return Response.json({ leads });
 }
 
 export async function action({ request }) {
@@ -34,7 +33,7 @@ export async function action({ request }) {
     data: { lastReminderSent: new Date() }
   });
 
-  return json({ ok: true, message: "Reminder sent successfully (simulated)" });
+  return Response.json({ ok: true, message: "Reminder sent successfully (simulated)" });
 }
 
 export default function LeadsPage() {
@@ -74,32 +73,26 @@ export default function LeadsPage() {
                     accessibilityLabel={`View details for ${email}`}
                     name={email}
                   >
-                    <Stack distribution="fill">
-                      <Stack.Item fill>
+                    <InlineStack align="space-between">
+                      <BlockStack gap="100">
                         <Text variant="bodyMd" fontWeight="bold" as="h3">
                           {email}
                         </Text>
                         <Text variant="bodySm" tone="subdued" as="p">
                           Captured on: {new Date(capturedAt).toLocaleString()}
                         </Text>
-                      </Stack.Item>
-                      <Stack.Item>
-                        <Badge tone={status === "CONVERTED" ? "success" : "attention"}>
-                          {status}
-                        </Badge>
-                      </Stack.Item>
-                      <Stack.Item>
-                        <Text variant="bodyMd" as="p">
-                          {itemCount} items | {currency} {totalPrice}
-                        </Text>
-                      </Stack.Item>
-                      <Stack.Item>
-                        <Form method="post">
-                          <input type="hidden" name="id" value={id} />
-                          <Button submit variant="secondary" size="slim">Send Reminder</Button>
-                        </Form>
-                      </Stack.Item>
-                    </Stack>
+                      </BlockStack>
+                      <Badge tone={status === "CONVERTED" ? "success" : "attention"}>
+                        {status}
+                      </Badge>
+                      <Text variant="bodyMd" as="p">
+                        {itemCount} items | {currency} {totalPrice}
+                      </Text>
+                      <Form method="post">
+                        <input type="hidden" name="id" value={id} />
+                        <Button submit variant="secondary" size="slim">Send Reminder</Button>
+                      </Form>
+                    </InlineStack>
                   </ResourceItem>
                 );
               }}

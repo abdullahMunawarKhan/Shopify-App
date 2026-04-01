@@ -1,7 +1,6 @@
-import { json } from "@react-router/node";
 import { useLoaderData, Form, useActionData } from "react-router";
 import { useState, useEffect } from "react";
-import { Page, Layout, Card, ResourceList, ResourceItem, Text, TextField, Button, Box, Divider } from "@shopify/polaris";
+import { Page, Layout, Card, ResourceList, ResourceItem, Text, TextField, Button, Box, InlineStack, BlockStack } from "@shopify/polaris";
 import { authenticate } from "../shopify.server";
 import prisma from "../db.server";
 import { useAppBridge } from "@shopify/app-bridge-react";
@@ -15,7 +14,7 @@ export async function loader({ request }) {
     orderBy: { createdAt: "desc" },
   });
 
-  return json({ templates });
+  return Response.json({ templates });
 }
 
 export async function action({ request }) {
@@ -31,7 +30,7 @@ export async function action({ request }) {
   if (intent === "delete") {
     const id = parseInt(formData.get("id"));
     await prisma.emailTemplate.delete({ where: { id } });
-    return json({ ok: true, message: "Template deleted" });
+    return Response.json({ ok: true, message: "Template deleted" });
   }
 
   const templateData = {
@@ -47,10 +46,10 @@ export async function action({ request }) {
       where: { id: parseInt(id) },
       data: templateData,
     });
-    return json({ ok: true, message: "Template updated" });
+    return Response.json({ ok: true, message: "Template updated" });
   } else {
     await prisma.emailTemplate.create({ data: templateData });
-    return json({ ok: true, message: "Template created" });
+    return Response.json({ ok: true, message: "Template created" });
   }
 }
 
@@ -131,25 +130,23 @@ export default function TemplatesPage() {
               renderItem={(item) => (
                 <ResourceItem id={item.id} onClick={() => handleEdit(item)}>
                   <Box padding="200">
-                    <Stack distribution="fill">
-                      <Stack.Item fill>
+                    <InlineStack align="space-between" blockAlign="center">
+                      <BlockStack gap="100">
                         <Text variant="bodyMd" fontWeight="bold">
                           {item.name}
                         </Text>
                         <Text variant="bodySm" tone="subdued">
                           Subject: {item.subject}
                         </Text>
-                      </Stack.Item>
-                      <Stack.Item>
-                        <Form method="post" onSubmit={(e) => {
-                            if (!confirm("Delete this template?")) e.preventDefault();
-                        }}>
-                          <input type="hidden" name="id" value={item.id} />
-                          <input type="hidden" name="intent" value="delete" />
-                          <Button tone="critical" submit plain>Delete</Button>
-                        </Form>
-                      </Stack.Item>
-                    </Stack>
+                      </BlockStack>
+                      <Form method="post" onSubmit={(e) => {
+                          if (!confirm("Delete this template?")) e.preventDefault();
+                      }}>
+                        <input type="hidden" name="id" value={item.id} />
+                        <input type="hidden" name="intent" value="delete" />
+                        <Button tone="critical" submit variant="plain">Delete</Button>
+                      </Form>
+                    </InlineStack>
                   </Box>
                 </ResourceItem>
               )}
